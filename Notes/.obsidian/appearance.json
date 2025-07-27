@@ -1,9 +1,9 @@
 {
   "theme": "obsidian",
-  "cssTheme": "Border",
-  "accentColor": "",
+  "cssTheme": "Light & Bright",
+  "accentColor": "#5cf56e",
   "interfaceFontFamily": "Century Gothic",
-  "baseFontSize": 13,
+  "baseFontSize": 19,
   "baseFontSizeAction": true,
   "nativeMenus": false
 }
