@@ -115,7 +115,6 @@ rfl
 ```
 
 > **Note:** add_zero b means b + 0 = b, add_zero c means c + 0 = c. Giving input to a theorem like this is called precision rewriting.
-
 ## Adding with Successors
 Every natural number in Lean is either zero, or the successor of another number (written as succ n). So we found one example on how to add 0 (like x + 0 = x), but how to add with successors?
 
