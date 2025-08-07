@@ -1,5 +1,4 @@
-
-**1.1 Evaluating Expressions
+## 1.1 Evaluating Expressions
  
 ```lean
 #eval String.append "Hello, " "Lean!"
@@ -7,32 +6,32 @@
 #eval String.append "Hello" (String.append "world")
 ```
 
-the first line works without parentheses because `"Hello, "` and `"Lean!"` are both string values being passed directly to `String.append` as two arguments. so it’s just `String.append str1 str2`.
+The first line works without parentheses because `"Hello, "` and `"Lean!"` are both string values being passed directly to `String.append` as two arguments, so it's just `String.append str1 str2`.
 
-the second line uses parentheses because it's nesting one `String.append` inside another. `String.append "oak" "tree"` runs first and returns `"oaktree"`, which then becomes the second argument for `String.append "great" ___`.
+The second line uses parentheses because it's nesting one `String.append` inside another. `String.append "oak" "tree"` runs first and returns `"oaktree"`, which then becomes the second argument for `String.append "great" ___`.
 
-so:  
+So:  
 `String.append "great" (String.append "oak" "tree")`  
 means: `"great" ++ "oak" ++ "tree"`
 
-the third line doesn't work because `"Hello"` and `"world"` are not separated by a comma or space, it just glues them together with no space. if the goal is to get `"Hello world"` (with space), need to include a space string.
+The third line doesn't work because `"Hello"` and `"world"` are not separated by a comma or space, it just glues them together with no space. If the goal is to get `"Hello world"` (with space), need to include a space string.
 
-this works:  
+This works:  
 ```lean
 #eval String.append "Hello " "world"
 ```
 
-or with nesting, do this:  
+Or with nesting, do this:  
 ```lean
 #eval String.append "Hello" (String.append " " "world")
 ```
 
-this builds `"Hello" ++ " " ++ "world"`  
+This builds `"Hello" ++ " " ++ "world"`  
 and gives the expected output: `"Hello world"`
 
-sooo, it's not about number of arguments, it's about *when* parentheses are needed
+So, it's not about the number of arguments, it's about *when* parentheses are needed.
 
-lean uses function application by space, so this:
+Lean uses function application by space, so this:
 
 ```lean
 String.append "Hello, " "Lean!"
@@ -40,40 +39,37 @@ String.append "Hello, " "Lean!"
 
 means: call `String.append` with `"Hello, "` and `"Lean!"`
 
-but this:
+But this:
 
 ```lean
 String.append "great" (String.append "oak" "tree")
 ```
 
 means: run `String.append "oak" "tree"` first → result is `"oaktree"`  
-then use it as second argument: `String.append "great" "oaktree"` → `"greatoaktree"`
+then use it as the second argument: `String.append "great" "oaktree"` → `"greatoaktree"`
 
-parentheses are only needed when passing the *result of a function* as an argument
+Parentheses are only needed when passing the *result of a function* as an argument.
 
-this fails:
+This fails:
 
 ```lean
 String.append "Hello" String.append "world"
 ```
 
-because lean reads it like:  
+because Lean reads it like:  
 → first argument: `"Hello"`  
 → second argument: `String.append` (which is not a string)  
-→ third thing: `"world"` , extra
+→ third thing: `"world"`, extra
 
-so to fix it, wrap the inner call in `()`:
+So to fix it, wrap the inner call in `()`:
 
 ```lean
 String.append "Hello" (String.append " " "world")
 ```
 
-now:  
+Now:  
 → second argument becomes `" world"`  
 → result: `"Hello world"`
-
-
-
 
 **Code:**  
 ```lean
@@ -88,61 +84,59 @@ String.append "it is " (if 1 > 2 then "yes" else "no")
 → "it is no"
 ```
 
-**explanation:**  
-in imperative languages like C or Python, there are *two* things, conditional statements (`if`) and conditional expressions (`?:` or inline `if`).  
-lean doesn’t do that — lean is *expression-oriented*, meaning *everything returns a value*, so there's only conditional expressions.
+**Explanation:**  
+In imperative languages like C or Python, there are *two* things, conditional statements (`if`) and conditional expressions (`?:` or inline `if`).  
+Lean doesn’t do that — Lean is *expression-oriented*, meaning *everything returns a value*, so there's only conditional expressions.
 
-in lean, this works:  
+In Lean, this works:  
 ```lean
 if condition then value1 else value2
 ```
 
 because it's an expression — it returns either `value1` or `value2` depending on the condition.
 
-for example:  
+For example:  
 `if 1 > 2 then "yes" else "no"`  
 this is saying: if 1 is greater than 2, return `"yes"`, otherwise return `"no"`
 
-now look at this code:
+Now look at this code:
 
 ```lean
 #eval String.append "it is " (if 1 > 2 then "yes" else "no")
 ```
 
-first step:  
+First step:  
 `1 > 2` is false → replace with `false`  
 now it becomes:  
 `String.append "it is " (if false then "yes" else "no")`
 
-then:  
-since condition is false, it picks `"no"`  
+Then:  
+since the condition is false, it picks `"no"`  
 → `String.append "it is " "no"`  
 → `"it is no"`
 
-so even though it feels weird at first, remember:  
+So even though it feels weird at first, remember:  
 `(if false then "yes" else "no")` is just a string expression that evaluates to `"no"`  
-and then that result is passed into `String.append`
+and then that result is passed into `String.append`.
 
-**about output not showing up:**  
-make sure to use `#eval`, just typing an expression like  
+**About output not showing up:**  
+Make sure to use `#eval`, just typing an expression like  
 ```lean
 String.append "it is " (if 1 > 2 then "yes" else "no")
 ```
 
-won’t show anything, lean needs `#eval` in front to evaluate and show output
+won’t show anything, Lean needs `#eval` in front to evaluate and show output.
 
-**correct working version:**  
+**Correct working version:**  
 ```lean
 #eval String.append "it is " (if 1 > 2 then "yes" else "no")
 -- output: "it is no"
 ```
 
-_NOTE:_ lean won’t show output unless `#eval` is used, expressions alone don’t auto-display.  
-add `#eval` before the expression to make lean evaluate and print the result.
+_NOTE:_ Lean won’t show output unless `#eval` is used, expressions alone don’t auto-display.  
+Add `#eval` before the expression to make Lean evaluate and print the result.
 
-
-**1.1 Exercises
-
+### 1.1 Exercises
 
 ```lean
 #eval 42 + 19
@@ -161,126 +155,123 @@ add `#eval` before the expression to make lean evaluate and print the result.
 -- "not equal"
 ```
 
-**fix notes:**
+**Fix notes:**
 
-- this fails:  
+- This fails:  
   ```lean
   #eval String.append "it is" (if 3 == 3 then 5 else 7)
   ```  
-  because `String.append` expects both arguments to be strings — but `if 3 == 3 then 5 else 7` is a number
+  because `String.append` expects both arguments to be strings — but `if 3 == 3 then 5 else 7` is a number.
 
-- to make it work, either use strings directly:
+- To make it work, either use strings directly:
   ```lean
   #eval String.append "it is " (if 3 == 3 then "yes" else "no")
   -- "it is yes"
   ```
 
-- or don't use `String.append` when working with numbers:
+- Or don't use `String.append` when working with numbers:
   ```lean
   #eval if 3 == 3 then 5 else 7
   -- 5
   ```
 
-**1.2 Types**
+## 1.2 Types
 
-types describe what kind of values a program can compute every expression in lean must have a type. types help the compiler figure out memory layout, catch bugs like adding a number to a string, and act as a lightweight spec for functions. lean's type system is powerful enough to express logic and math proofs, but also works fine with basic stuff like `Nat` and `Int`.
+Types describe what kind of values a program can compute. Every expression in Lean must have a type. Types help the compiler figure out memory layout, catch bugs like adding a number to a string, and act as a lightweight spec for functions. Lean's type system is powerful enough to express logic and math proofs, but also works fine with basic stuff like `Nat` and `Int`.
 
-types are given using a colon inside parentheses:
+Types are given using a colon inside parentheses:
 ```lean
 #eval (1 + 2 : Nat)
 -- 3
 ```
 
-`Nat` means natural numbers — non-negative integers. subtraction on `Nat` never gives negative results. if the answer would be negative, it just gives 0:
+`Nat` means natural numbers — non-negative integers. Subtraction on `Nat` never gives negative results. If the answer would be negative, it just gives 0:
 ```lean
 #eval (1 - 2 : Nat)
 -- 0
 ```
 
-to get actual negative numbers, use `Int`:
+To get actual negative numbers, use `Int`:
 ```lean
 #eval (1 - 2 : Int)
 -- -1
 ```
 
-to check a type without evaluating:
+To check a type without evaluating:
 ```lean
 #check (1 - 2 : Int)
 -- 1 - 2 : Int
 ```
 
-when a program doesn’t make sense type-wise, lean shows a type mismatch:
+When a program doesn’t make sense type-wise, Lean shows a type mismatch:
 ```lean
 #check String.append ["hello", " "] "world"
 ```
 
-error:  
+Error:  
 `["hello", " "]` is a list of strings (`List String`)  
-but `String.append` expects just a single `String` as first argument  
-so this fails
+but `String.append` expects just a single `String` as the first argument  
+so this fails.
 
-**summary notes:**
+**Summary notes:**
 
 - `Nat` → only non-negative numbers  
 - `Int` → can include negative numbers  
 - `#eval` → run expression  
 - `#check` → just show type, don’t run  
-- type errors happen when arguments are not what a function expects
+- Type errors happen when arguments are not what a function expects.
 
-
-this works:
+This works:
 ```lean
 #eval String.append "great" (String.append "oak" "tree")
 -- "greatoaktree"
 ```
 
-because it's **not** a list. it's just a function inside a function.
+because it's **not** a list. It's just a function inside a function.
 
 `String.append "oak" "tree"` runs first → gives `"oaktree"`  
-then `"great"` and `"oaktree"` are passed to `String.append`
+then `"great"` and `"oaktree"` are passed to `String.append`.
 
-so it’s like:
+So it’s like:
 ```lean
 String.append "great" "oaktree"
 ```
 
 which is totally valid.
 
-but this fails:
+But this fails:
 ```lean
 #eval String.append ["oak", "tree"] "great"
 ```
 
-because `["oak", "tree"]` is a **list** of strings, `List String`  
-lean doesn’t know how to take a list and treat it like a single string.
+because `["oak", "tree"]` is a **list** of strings, `List String`.  
+Lean doesn’t know how to take a list and treat it like a single string.
 
-**square brackets → list**  
-**parentheses → grouping / function call**
+**Square brackets → list**  
+**Parentheses → grouping / function call**
 
-so yea, no square brackets = not a list.
+So, no square brackets = not a list.
 
+## 1.3 Functions and Definitions
 
-**1.3 Functions and Definitions**
-
-in lean, new names are defined using `def` and `:=`  
-(not `=`, which is used to prove equalities)
+In Lean, new names are defined using `def` and `:=` (not `=`, which is used to prove equalities).
 
 ```lean
 def hello := "Hello"
 def lean : String := "Lean"
 ```
 
-can use them like:
+Can use them like:
 ```lean
 #eval String.append hello (String.append " " lean)
 -- "Hello Lean"
 ```
 
-defined names can only be used **after** they are defined.
+Defined names can only be used **after** they are defined.
 
-**1.3.1 defining functions**
+**1.3.1 Defining Functions**
 
-functions are also defined with `def`,no special syntax needed
+Functions are also defined with `def`, no special syntax needed.
 
 ```lean
 def add1 (n : Nat) : Nat := n + 1
@@ -288,7 +279,7 @@ def add1 (n : Nat) : Nat := n + 1
 -- 8
 ```
 
-multi-argument function:
+Multi-argument function:
 ```lean
 def maximum (n : Nat) (k : Nat) : Nat :=
   if n < k then k else n
@@ -297,7 +288,7 @@ def maximum (n : Nat) (k : Nat) : Nat :=
 -- 14
 ```
 
-string join with space:
+String join with space:
 ```lean
 def spaceBetween (before : String) (after : String) : String :=
   String.append before (String.append " " after)
@@ -306,7 +297,7 @@ def spaceBetween (before : String) (after : String) : String :=
 -- "Lean Rocks"
 ```
 
-functions are just values too.  
+Functions are just values too.  
 `Nat → Bool` means: takes a Nat, returns a Bool  
 `Nat → Nat → Nat` means: takes two Nats, returns a Nat
 
@@ -321,8 +312,8 @@ functions are just values too.
 -- maximum : Nat → Nat → Nat
 ```
 
-functions in lean are **curried**  
-it means: one arg at a time, like this:
+Functions in Lean are **curried**.  
+It means: one arg at a time, like this:
 ```lean
 #check maximum 3
 -- maximum 3 : Nat → Nat
@@ -332,13 +323,11 @@ it means: one arg at a time, like this:
 ```
 
 `Nat → Nat → Nat` = `Nat → (Nat → Nat)`  
-function returns another function
+Function returns another function.
 
+### 1.3.1 Exercises
 
-
-**1.3.1.1 Exercises**
-
-1. `joinStringsWith` function
+1. `joinStringsWith` function:
 
 ```lean
 def joinStringsWith (sep : String) (a : String) (b : String) : String :=
@@ -348,14 +337,14 @@ def joinStringsWith (sep : String) (a : String) (b : String) : String :=
 -- "one, and another"
 ```
 
-2. type of `joinStringsWith ": "`
+2. Type of `joinStringsWith ": "`:
 
 ```lean
 #check joinStringsWith ": "
 -- joinStringsWith ": " : String → String → String
 ```
 
-3. volume function:
+3. Volume function:
 
 ```lean
 def volume (height : Nat) (width : Nat) (depth : Nat) : Nat :=
@@ -365,9 +354,9 @@ def volume (height : Nat) (width : Nat) (depth : Nat) : Nat :=
 -- 24
 ```
 
-**understanding `#check joinStringsWith ": "`**
+**Understanding `#check joinStringsWith ": "`**
 
-definition:
+Definition:
 ```lean
 def joinStringsWith (sep : String) (a : String) (b : String) : String
 ```
@@ -376,7 +365,7 @@ has type:
 String → String → String → String
 ```
 
-calling:
+Calling:
 ```lean
 #check joinStringsWith ": "
 ```
@@ -385,10 +374,10 @@ returns:
 String → String → String
 ```
 
-→ because only `sep` is filled in → it returns a function waiting for 2 more strings
+→ because only `sep` is filled in → it returns a function waiting for 2 more strings.
 
-**this is called partial application**  
-you’re giving one input and getting back a function
+**This is called partial application**.  
+You’re giving one input and getting back a function.
 
 ```lean
 def colonJoin := joinStringsWith ": "
@@ -396,44 +385,43 @@ def colonJoin := joinStringsWith ": "
 -- "label: value"
 ```
 
+## 1.3.2 Defining Types
 
-**1.3.2 defining types**
-
-types are expressions in lean — can define aliases like:
+Types are expressions in Lean — we can define aliases like:
 
 ```lean
 def Str : Type := String
 def aStr : Str := "This is a string."
 ```
 
-but this fails:
+But this fails:
 ```lean
 def NaturalNumber : Type := Nat
 def thirtyEight : NaturalNumber := 38
 -- error: failed to synthesize OfNat
 ```
 
-because number literals are **polymorphic**,lean tries to find a number conversion for `NaturalNumber`, but can't
+because number literals are **polymorphic**, Lean tries to find a number conversion for `NaturalNumber`, but can't.
 
-**fix 1**: use explicit Nat cast on the right-hand side
+**Fix 1**: use explicit Nat cast on the right-hand side.
 
 ```lean
 def thirtyEight : NaturalNumber := (38 : Nat)
 ```
 
-**fix 2**: use `abbrev` instead of `def`
+**Fix 2**: use `abbrev` instead of `def`.
 
 ```lean
 abbrev N : Type := Nat
 def thirtyNine : N := 39
---  works fine
+-- works fine
 ```
 
-abbrev definitions are *reducible*, lean will auto-unfold them during overload resolution
+Abbrev definitions are *reducible*, Lean will auto-unfold them during overload resolution.
 
-**key notes:**
+**Key notes:**
 - `def` → defines values or types, not always unfoldable
 - `abbrev` → defines aliases, always unfoldable
-- number overload resolution works better with `abbrev` than `def`
+- Number overload resolution works better with `abbrev` than `def`
 
 

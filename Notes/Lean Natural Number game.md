@@ -1,5 +1,9 @@
-Lean is a proof assistant that checks Mathematics step-by-step like a computer. In this game we prove basic facts about natural numbers using Lean's tactics, some definitions, and already proven theorems. Particularly we learn about Peano arithmetic. Note the progress data of the entire game till of writing this in the `Lean Natural Number Game 100_ Progress (July 2025).json` file.
-![[Worlds.png]]
+Lean is a proof assistant that checks Mathematics step-by-step like a computer. In this game we prove basic facts about natural numbers using Lean's tactics, some definitions, and already proven theorems. Particularly we learn about Peano arithmetic. Note the progress data of the entire game till of writing this in the `Lean Natural Number Game Progress (July 2025).json`
+
+<div style="text-align: center;">
+  <img src="./Attachments/Worlds.png" alt="image" height="600">
+</div>
+
 We first defined the natural numbers.
 - $0$ is a natural number
 - Successor of $0$ is also natural numbers, denoted by `succ 0` in Lean
